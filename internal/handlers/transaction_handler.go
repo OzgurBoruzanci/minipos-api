@@ -19,20 +19,31 @@ func NewTransactionHandler(repo *repository.TransactionRepository) *TransactionH
 }
 
 func (h *TransactionHandler) CreateTransaction(c *gin.Context) {
+	idemKey := c.GetHeader("Idempotency-Key")
+	if idemKey == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Idempotency-Key basligi eksik! Cift cekim riski sebebiyle islem reddedildi."})
+		return
+	}
+	existingTx, err := h.repo.GetTransactionByIdempotencyKey(idemKey)
+	if err == nil {
+		c.IndentedJSON(http.StatusOK, gin.H{
+			"message": "MUKEMMEL! Cift cekim engellendi. Bu islem daha once yapilmis.",
+			"data":    existingTx,
+		})
+		return
+	}
 	var transaction models.Transaction
-
 	if err := c.ShouldBindJSON(&transaction); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Gecersiz veri formati"})
 		return
 	}
-
+	transaction.IdempotencyKey = idemKey
 	if err := h.repo.ProcessPayment(&transaction); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.IndentedJSON(http.StatusCreated, gin.H{
-		"message": "Islem basariyla gerceklesti",
+		"message": "Islem ilk defa ve basariyla gerceklesti",
 		"data":    transaction,
 	})
 }

@@ -35,3 +35,9 @@ func (repo *MerchantRepository) GetMerchantByAPIKey(apiKey string) (models.Merch
 	err := repo.db.Where("api_key = ?", apiKey).First(&merchant).Error
 	return merchant, err
 }
+
+func (repo *TransactionRepository) GetTransactionByIdempotencyKey(key string) (*models.Transaction, error) {
+	var transaction models.Transaction
+	err := repo.db.Where("idempotency_key = ?", key).First(&transaction).Error
+	return &transaction, err
+}
