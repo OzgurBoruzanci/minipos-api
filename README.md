@@ -32,6 +32,12 @@ Gerekli Go paketlerini indirdikten sonra sunucuyu başlatın:
 `go mod tidy`
 `go run main.go`
 
+## 🧪 Testlerin Çalıştırılması
+
+Sistemdeki kritik finansal algoritmaları doğrulamak için:
+```bash
+go test ./internal/repository/ -v
+
 *Sunucu varsayılan olarak `http://localhost:8080` adresinde çalışacaktır. GORM, tabloları otomatik olarak oluşturacaktır.*
 
 ## 📡 API Uç Noktaları (Endpoints)

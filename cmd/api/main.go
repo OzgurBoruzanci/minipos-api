@@ -5,6 +5,7 @@ import (
 	"minipos-api/internal/middleware"
 	"minipos-api/internal/repository"
 	"minipos-api/pkg/database"
+	"minipos-api/pkg/notifications"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,8 @@ import (
 
 func main() {
 	database.ConnectDB()
+	notifications.StartNotificationWorker()
+
 	merchantRepo := repository.NewMerchantRepository(database.DB)
 	merchantHandler := handlers.NewMerchantHandler(merchantRepo)
 

@@ -6,6 +6,7 @@ import (
 
 	"minipos-api/internal/models"
 	"minipos-api/internal/repository"
+	"minipos-api/pkg/notifications"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,6 +43,7 @@ func (h *TransactionHandler) CreateTransaction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	notifications.WebhookQueue <- transaction
 	c.IndentedJSON(http.StatusCreated, gin.H{
 		"message": "Islem ilk defa ve basariyla gerceklesti",
 		"data":    transaction,
