@@ -18,7 +18,7 @@ func ConnectDB() {
 		log.Fatalf("Veritabanına bağlanılamadı: %v", err)
 	}
 	log.Println("Veritabanı bağlantısı başarılı!")
-	err = DB.AutoMigrate(&models.Merchant{})
+	err = DB.AutoMigrate(&models.Merchant{}, &models.Transaction{})
 	if err != nil {
 		log.Fatalf("Tablolar oluşturulamadı: %v", err)
 	}
