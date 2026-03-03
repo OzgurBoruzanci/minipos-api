@@ -2,6 +2,7 @@ package main
 
 import (
 	"minipos-api/internal/handlers"
+	"minipos-api/internal/middleware"
 	"minipos-api/internal/repository"
 	"minipos-api/pkg/database"
 	"net/http"
@@ -26,7 +27,8 @@ func main() {
 	r.POST("/merchants", merchantHandler.CreateMerchant)
 	r.GET("/merchants", merchantHandler.GetAllMerchants)
 	r.GET("/merchants/:id", merchantHandler.GetMerchantByID)
-	r.POST("/transactions", transactionHandler.CreateTransaction)
+	r.POST("/transactions", middleware.APIKeyAuth(merchantRepo), transactionHandler.CreateTransaction)
+	r.GET("/merchants/:id/transactions", middleware.APIKeyAuth(merchantRepo), transactionHandler.GetTransactionsByMerchant)
 	if err := r.Run(":8080"); err != nil {
 		panic("Sunucu baslatilamadi: " + err.Error())
 	}

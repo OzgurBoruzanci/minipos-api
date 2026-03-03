@@ -29,3 +29,9 @@ func (repo *MerchantRepository) GetMerchantByID(id uint) (*models.Merchant, erro
 	err := repo.db.First(&merchant, id).Error
 	return &merchant, err
 }
+
+func (repo *MerchantRepository) GetMerchantByAPIKey(apiKey string) (models.Merchant, error) {
+	var merchant models.Merchant
+	err := repo.db.Where("api_key = ?", apiKey).First(&merchant).Error
+	return merchant, err
+}

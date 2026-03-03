@@ -42,3 +42,15 @@ func (repo *TransactionRepository) ProcessPayment(transaction *models.Transactio
 		return nil
 	})
 }
+
+func (repo *TransactionRepository) GetTransactionsByMerchant(merchantID uint, page int, limit int) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	offset := (page - 1) * limit
+	err := repo.db.Where("merchant_id = ?", merchantID).
+		Order("created_at desc").
+		Offset(offset).
+		Limit(limit).
+		Find(&transactions).Error
+
+	return transactions, err
+}
